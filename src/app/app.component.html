@@ -3,16 +3,29 @@
 
 <!-- Navbar -->
 <nav class="bg-blue-500 p-4 text-white">
-  <h1 class="text-xl">Mi Navbar</h1>
+  <h1 class="text-xl">ToDo List</h1>
 </nav>
 
 <!-- Body -->
 <div class="grid grid-flow-row-dense grid-cols-2 gap-4 p-4">
 
+  <div class="col-span-2 bg-gray-200 p-4 rounded-lg shadow mb-4">
+    <h2 class="text-xl font-semibold mb-2">Descripción del Proyecto</h2>
+    <p>Este proyecto es una lista de tareas que permite a los usuarios agregar, completar y eliminar tareas. Las tareas pueden tener una descripción y una fecha límite para su finalización. Las tareas completadas se pueden mover a una lista de tareas completadas y también se pueden eliminar.</p>
+  </div>
+
+
+  <div class="col-span-2 bg-gray-100 p-4 rounded-lg shadow mb-4">
+    <p class="text-lg">Ingrese una nueva tarea, su descripción y la fecha y hora límite para completarla.</p>
+  </div>
   <!-- Input and Add Button -->
   <div class="col-span-2 flex items-center space-x-2">
     <input [(ngModel)]="newTask" type="text" placeholder="Nueva Tarea"
-           class="border-2 border-gray-300 p-2 w-4/5 text-lg rounded-lg"/>
+           class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
+    <input [(ngModel)]="newTaskDescripcion" type="text" placeholder="Descripción"
+           class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
+    <input [(ngModel)]="newTaskDueDate" type="datetime-local"
+           class="border-2 border-gray-300 p-2 w-2/5 text-lg rounded-lg"/>
     <button (click)="addTask()" class="bg-blue-500 text-white p-2 text-lg rounded-lg ml-2">Añadir</button>
   </div>
 
@@ -27,7 +40,15 @@
         [cdkDropListConnectedTo]="[doneList, deletedList]"
         class="example-list bg-gray-100 p-2 rounded-lg"
         (cdkDropListDropped)="dropTask($event)">
-        <div *ngFor="let item of tasks" class="example-box p-2 m-1 bg-white rounded-lg shadow" cdkDrag>{{ item }}</div>
+        <div *ngFor="let item of tasks" class="example-box p-2 m-1 bg-white rounded-lg shadow" cdkDrag>
+          <div>
+            {{ item.name }}
+          </div>
+          <div class="text-blue-800">
+            {{ item.descripcion }}
+          </div>
+          <div> {{ item.dueDate | date:'short' }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,7 +67,12 @@
         <div *ngFor="let item of completedTasks"
              class="example-box p-2 m-1 bg-white rounded-lg shadow flex items-center space-x-2" cdkDrag>
           <i class="fas fa-check text-green-500"></i>
-          <span>{{ item }}</span>
+          <span>{{ item.name }}</span>
+          <span>
+          {{ item.descripcion }}
+
+          </span>
+          <span class="text-gray-500 text-sm">{{ item.dueDate | date:'short' }}</span>
         </div>
       </div>
     </div>
@@ -65,5 +91,5 @@
 
 <!-- Footer -->
 <footer class="bg-blue-500 p-4 text-white text-center mt-4">
-  <p>Creado por [Tu Nombre] - 2024</p>
+  <p>Creado por Leandro Batista Diaz - 2024</p>
 </footer>

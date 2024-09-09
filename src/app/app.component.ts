@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { LocalStorageService } from './repository/local-storage.service';
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {LocalStorageService} from './repository/local-storage.service';
+import {Task} from './ITask';
 
 import {
   CdkDragDrop,
@@ -22,13 +23,16 @@ import {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  tasks: string[] = [];
-  completedTasks: string[] = [];
+  tasks: Task[] = [];
+  completedTasks: Task[] = [];
   newTask: string = '';
+  newTaskDueDate: string = '';
+  newTaskDescripcion: string = '';
   pendingStorageKey = 'tasks';
   completedStorageKey = 'completedTasks';
 
-  constructor(private localStorageService: LocalStorageService<string>) {}
+  constructor(private localStorageService: LocalStorageService<Task>) {
+  }
 
   ngOnInit(): void {
     const storedTasks = this.localStorageService.getItem(this.pendingStorageKey);
@@ -43,14 +47,15 @@ export class AppComponent {
   }
 
   addTask(): void {
-    if (this.newTask.trim()) {
-      this.tasks.push(this.newTask);
+    if (this.newTask.trim() && this.newTaskDueDate && this.newTaskDescripcion.trim()) {
+      this.tasks.push({name: this.newTask, dueDate: new Date(this.newTaskDueDate), descripcion: this.newTaskDescripcion});
       this.newTask = '';
+      this.newTaskDueDate = '';
       this.updateLocalStorage();
     }
   }
 
-  drop(event: CdkDragDrop<string[]>): void {
+  drop(event: CdkDragDrop<Task[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -70,7 +75,7 @@ export class AppComponent {
     this.localStorageService.setItem(this.completedStorageKey, this.completedTasks);
   }
 
-  dropTask(event: CdkDragDrop<string[]>): void {
+  dropTask(event: CdkDragDrop<Task[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else if (event.container.id === 'deletedList') {
