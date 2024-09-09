@@ -1,13 +1,93 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LocalStorageService } from './repository/local-storage.service';
+
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+  CdkDrag,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, MatSlideToggleModule, CommonModule, DragDropModule, FormsModule, CdkDropList, CdkDrag],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'TodoList';
+  tasks: string[] = [];
+  completedTasks: string[] = [];
+  newTask: string = '';
+  pendingStorageKey = 'tasks';
+  completedStorageKey = 'completedTasks';
+
+  constructor(private localStorageService: LocalStorageService<string>) {}
+
+  ngOnInit(): void {
+    const storedTasks = this.localStorageService.getItem(this.pendingStorageKey);
+    const storedCompletedTasks = this.localStorageService.getItem(this.completedStorageKey);
+
+    if (storedTasks) {
+      this.tasks = storedTasks;
+    }
+    if (storedCompletedTasks) {
+      this.completedTasks = storedCompletedTasks;
+    }
+  }
+
+  addTask(): void {
+    if (this.newTask.trim()) {
+      this.tasks.push(this.newTask);
+      this.newTask = '';
+      this.updateLocalStorage();
+    }
+  }
+
+  drop(event: CdkDragDrop<string[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    }
+    this.updateLocalStorage();
+  }
+
+
+  private updateLocalStorage(): void {
+    this.localStorageService.setItem(this.pendingStorageKey, this.tasks);
+    this.localStorageService.setItem(this.completedStorageKey, this.completedTasks);
+  }
+
+  dropTask(event: CdkDragDrop<string[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else if (event.container.id === 'deletedList') {
+      this.deleteTask(event.previousIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    }
+    this.updateLocalStorage();
+  }
+
+  deleteTask(index: number): void {
+    this.tasks.splice(index, 1);
+    this.updateLocalStorage();
+  }
 }
