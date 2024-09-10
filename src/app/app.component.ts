@@ -46,7 +46,7 @@ export class AppComponent {
     }
   }
 
-  addTask(): void {
+  agregarTarea(): void {
     if (this.newTask.trim() && this.newTaskDueDate && this.newTaskDescripcion.trim()) {
       this.tasks.push({name: this.newTask, dueDate: new Date(this.newTaskDueDate), descripcion: this.newTaskDescripcion});
       this.newTask = '';
@@ -54,21 +54,6 @@ export class AppComponent {
       this.updateLocalStorage();
     }
   }
-
-  drop(event: CdkDragDrop<Task[]>): void {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
-    this.updateLocalStorage();
-  }
-
 
   private updateLocalStorage(): void {
     this.localStorageService.setItem(this.pendingStorageKey, this.tasks);
