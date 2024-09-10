@@ -1,44 +1,47 @@
-
 <body>
-  <!-- Navbar -->
-  <nav class="bg-blue-500 p-4 text-white">
-    <h1 class="text-xl">ToDo List</h1>
-  </nav>
+<!-- Navbar -->
+<nav class="bg-blue-500 p-4 text-white">
+  <h1 class="text-xl">ToDo List</h1>
+</nav>
 
-  <main class="flex-grow">
-    <div class="grid grid-flow-row-dense grid-cols-2 gap-4 p-4">
-      <div class="col-span-2 bg-gray-200 p-4 rounded-lg shadow mb-4">
-        <h2 class="text-xl font-semibold mb-2">Descripción del Proyecto</h2>
-        <p>Este proyecto es una lista de tareas que permite a los usuarios agregar, completar y eliminar tareas. Las tareas pueden tener una descripción y una fecha límite para su finalización. Las tareas completadas se pueden mover a una lista de tareas completadas y también se pueden eliminar.</p>
-      </div>
+<main class="flex-grow">
+  <div class="grid grid-flow-row-dense grid-cols-2 gap-4 p-4">
+    <div class="col-span-2 bg-gray-200 p-4 rounded-lg shadow mb-4">
+      <h2 class="text-xl font-semibold mb-2">Descripción del Proyecto</h2>
+      <p>Este proyecto es una lista de tareas que permite a los usuarios agregar, completar y eliminar tareas. Las
+        tareas pueden tener una descripción y una fecha límite para su finalización. Las tareas completadas se pueden
+        mover a una lista de tareas completadas y también se pueden eliminar.</p>
+    </div>
 
-      <div class="col-span-2 bg-gray-100 p-4 rounded-lg shadow mb-4">
-        <p class="text-lg">Ingrese una nueva tarea, su descripción y la fecha y hora límite para completarla.</p>
-      </div>
+    <div class="col-span-2 bg-gray-100 p-4 rounded-lg shadow mb-4">
+      <p class="text-lg">Ingrese una nueva tarea, su descripción y la fecha y hora límite para completarla.</p>
+    </div>
 
-      <!-- Inputs -->
-      <div class="col-span-2 flex items-center space-x-2">
-        <input [(ngModel)]="newTask" type="text" placeholder="Nueva Tarea"
-               class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
-        <input [(ngModel)]="newTaskDescripcion" type="text" placeholder="Descripción"
-               class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
-        <input [(ngModel)]="newTaskDueDate" type="datetime-local"
-               class="border-2 border-gray-300 p-2 w-2/5 text-lg rounded-lg"/>
-        <button (click)="agregarTarea()" class="bg-blue-500 text-white p-2 text-lg rounded-lg ml-2">Añadir</button>
-      </div>
+    <!-- Inputs -->
+    <div class="col-span-2 flex items-center space-x-2">
+      <input [(ngModel)]="newTask" type="text" placeholder="Nueva Tarea"
+             class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
+      <input [(ngModel)]="newTaskDescripcion" type="text" placeholder="Descripción"
+             class="border-2 border-gray-300 p-2 w-3/5 text-lg rounded-lg"/>
+      <input [(ngModel)]="newTaskDueDate" type="datetime-local"
+             class="border-2 border-gray-300 p-2 w-2/5 text-lg rounded-lg"/>
+      <button (click)="agregarTarea()" class="bg-blue-500 text-white p-2 text-lg rounded-lg ml-2">Añadir</button>
+    </div>
 
-      <!-- Drop tareas pendientes -->
-      <div class="col-span-1">
-        <div class=" bg-white p-4 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-2 text-center">Tareas Pendientes</h2>
-          <div
-            cdkDropList
-            #todoList="cdkDropList"
-            [cdkDropListData]="tasks"
-            [cdkDropListConnectedTo]="[doneList, deletedList]"
-            class="example-list bg-gray-100 p-2 rounded-lg"
-            (cdkDropListDropped)="dropTask($event)">
-            <div *ngFor="let item of tasks" class="example-box p-2 m-1 bg-white rounded-lg shadow" cdkDrag>
+    <!-- Drop tareas pendientes -->
+    <div class="col-span-1">
+      <div class=" bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2 text-center">Tareas Pendientes</h2>
+        <div
+          cdkDropList
+          #todoList="cdkDropList"
+          [cdkDropListData]="tasks"
+          [cdkDropListConnectedTo]="[doneList, deletedList]"
+          class="example-list bg-gray-100 p-2 rounded-lg"
+          (cdkDropListDropped)="dropTask($event)">
+
+          @for (item of tasks; track item.name) {
+            <div class="example-box p-2 m-1 bg-white rounded-lg shadow" cdkDrag>
               <div>
                 {{ item.name }}
               </div>
@@ -46,49 +49,59 @@
                 {{ item.descripcion }}
               </div>
               <div> {{ item.dueDate | date:'short' }}</div>
+              <i class="fa fa-bars"></i>
             </div>
-          </div>
+          } @empty {
+            <div class="text-center text-gray-500">No hay tareas pendientes</div>
+          }
+
         </div>
       </div>
 
-      <!-- Drop Tareas completadas -->
-      <div class="col-span-1">
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h2 class="text-xl font-semibold mb-2 text-center">Tareas Completadas</h2>
-          <div
-            cdkDropList
-            #doneList="cdkDropList"
-            [cdkDropListData]="completedTasks"
-            [cdkDropListConnectedTo]="[todoList]"
-            class="example-list bg-gray-100 p-2 rounded-lg"
-            (cdkDropListDropped)="dropTask($event)">
-            <div *ngFor="let item of completedTasks"
-                 class="example-box p-2 m-1 bg-white rounded-lg shadow flex items-center space-x-2" cdkDrag>
+    </div>
+
+    <!-- Drop Tareas completadas -->
+    <div class="col-span-1">
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2 text-center">Tareas Completadas</h2>
+        <div
+          cdkDropList
+          #doneList="cdkDropList"
+          [cdkDropListData]="completedTasks"
+          [cdkDropListConnectedTo]="[todoList]"
+          class="example-list bg-gray-100 p-2 rounded-lg"
+          (cdkDropListDropped)="dropTask($event)">
+          @for (item of completedTasks; track item.name) {
+            <div class="example-box p-2 m-1 bg-white rounded-lg shadow flex items-center space-x-2" cdkDrag>
               <i class="fas fa-check text-green-500"></i>
               <span>{{ item.name }}</span>
               <span>
               {{ item.descripcion }}
               </span>
               <span class="text-gray-500 text-sm">{{ item.dueDate | date:'short' }}</span>
+              <i class="fa fa-bars"></i>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Drop para borrado -->
-      <div class="col-span-2">
-        <div cdkDropList #deletedList="cdkDropList" [cdkDropListData]="[]"
-             (cdkDropListDropped)="deleteTask($event.previousIndex)"
-             class="bg-red-100 text-black px-4 py-6 h-32 rounded shadow text-center cursor-pointer flex items-center justify-center space-x-2">
-          <i class="fas fa-trash-alt"></i>
-          <span>Arrastra aquí para eliminar</span>
+          } @empty {
+            <div class="text-center text-gray-500">No hay tareas completadas</div>
+          }
         </div>
       </div>
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer>
-    <p>Creado por Leandro Batista Diaz - 2024</p>
-  </footer>
+    <!-- Drop para borrado -->
+    <div class="col-span-2">
+      <div cdkDropList #deletedList="cdkDropList" [cdkDropListData]="[]"
+           (cdkDropListDropped)="deleteTask($event.previousIndex)"
+           class="bg-red-100 text-black px-4 py-6 h-32 rounded shadow text-center cursor-pointer flex items-center justify-center space-x-2">
+        <i class="fas fa-trash-alt"></i>
+        <span>Arrastra aquí para eliminar</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer>
+  <p>Creado por Leandro Batista Diaz - 2024</p>
+</footer>
 </body>

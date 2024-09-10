@@ -50,6 +50,7 @@ export class AppComponent {
     if (this.newTask.trim() && this.newTaskDueDate && this.newTaskDescripcion.trim()) {
       this.tasks.push({name: this.newTask, dueDate: new Date(this.newTaskDueDate), descripcion: this.newTaskDescripcion});
       this.newTask = '';
+      this.newTaskDescripcion = '';
       this.newTaskDueDate = '';
       this.updateLocalStorage();
     }
